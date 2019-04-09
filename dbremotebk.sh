@@ -2,19 +2,45 @@
 
 # Linux Database Remote Backup Script
 # Version: 1.0
-# Script by: Yamacasis
+# Script by: YamaCasis
 # Email: yamacasis@gmail.com
+# Created : 8 April 2019
 
+########################
+# Configuration        #
+########################
 
-backup_path="/home/dbroot"
+. config.conf
+
+########################
+# Functions            #
+########################
 
 create_mysql_backup() {
   umask 177
 
-  FILE="$db_name-$d.sql.gz"
-  mysqldump --user=$user --password=$password --host=$host $db_name | gzip --best > $FILE
+  FILE="$s-$d.sql.gz"
+  $MYSQLDUMP_path --user=$MYSQL_user --password=$MYSQL_password --host=$MYSQL_host $db_name | gzip --best > $FILE
 
-  echo 'Backup Complete'
+  echo "Mysql $s : $FILE - Backup Complete"
+}
+
+create_mongo_backup() {
+  umask 177
+
+  FILE="mongo-$s-$d"
+  if [ -z  "$MONGO_user"]
+  then
+    CERT=""
+  else
+    CERT=" --username $MONGO_user --password $MONGO_password "
+  fi
+  $MYSQLDUMP_path --host $MONGO_host -d $s $CERT --out $FILE
+  tar -zcf $FILE.tar.gz $FILE
+  rm -f $FILE
+  FILE="$FILE.tar.gz"
+
+  echo "Mongo $s : $FILE - Backup Complete"
 }
 
 clean_backup() {
@@ -22,60 +48,69 @@ clean_backup() {
   echo 'Local Backup Removed'
 }
 
-########################
-# Configuration        #
-########################
+send_backup() {
+  if [ $TYPE -eq 1 ]
+  then
+  ftp -n -i $SERVER <<EOF
+  user $USERNAME $PASSWORD
+  binary
+  cd $REMOTEDIR
+  mput $FILE
+  quit
+EOF
+  elif [ $TYPE -eq 2 ]
+  then
+  rsync --rsh="sshpass -p $PASSWORD ssh -p $PORT -o StrictHostKeyChecking=no -l $USERNAME" $backup_path/$FILE $SERVER:$REMOTEDIR
+  else
+  echo "Please select a valid type"
+  fi
 
-# Database credentials
-user="root"
-password="uQ12!mn2Z"
-host="192.168.110.3"
-db_name="espard_app"
+  echo "Sended - $FILE"
 
-# FTP Login Data
-USERNAME="Esparddb"
-PASSWORD="oiWEwqeFSDa12"
-SERVER="192.168.140.4"
-PORT="21"
-
-#Remote directory where the backup will be placed
-REMOTEDIR="./"
-
-#Transfer type
-#1=FTP
-#2=SFTP
-TYPE=1
-
-#Daabase Active
-MYSQL=1
-MONGO=0
+}
 
 ##############################
 # Start Backup Script        #
 ##############################
 
-d=$(date +%F-%H%M%S)
 cd $backup_path
-create_mysql_backup
 
-if [ $TYPE -eq 1 ]
+echo 'Remote Backup ,Starting ...'
+
+if [ $MYSQL -eq 1 ]
 then
-ftp -n -i $SERVER <<EOF
-user $USERNAME $PASSWORD
-binary
-cd $REMOTEDIR
-mput $FILE
-quit
-EOF
-elif [ $TYPE -eq 2 ]
+  for s in "${MYSQL_dbs_name[@]}";
+  do
+    d=$(date +%F-%H%M%S)
+    echo $s
+    echo $d
+
+    create_mysql_backup
+
+    send_backup
+
+    clean_backup
+  done
+fi
+
+if [ $MONGO -eq 1 ]
 then
-rsync --rsh="sshpass -p $PASSWORD ssh -p $PORT -o StrictHostKeyChecking=no -l $USERNAME" $backup_path/$FILE $SERVER:$REMOTEDIR
-else
-echo 'Please select a valid type'
+  for s in "${MONGO_dbs_name[@]}";
+  do
+    d=$(date +%F-%H%M%S)
+    echo $s
+    echo $d
+
+    create_mongo_backup
+
+    send_backup
+
+    clean_backup
+  done
 fi
 
 echo 'Remote Backup Complete'
-clean_backup
+
 ##############################
 # End Backup Script          #
 ##############################
