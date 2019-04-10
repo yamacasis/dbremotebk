@@ -58,14 +58,16 @@ send_backup() {
   mput $FILE
   quit
 EOF
+  echo "Sended FTP - $FILE"
   elif [ $TYPE -eq 2 ]
   then
   rsync --rsh="sshpass -p $PASSWORD ssh -p $PORT -o StrictHostKeyChecking=no -l $USERNAME" $backup_path/$FILE $SERVER:$REMOTEDIR
+  echo "Sended SFTP - $FILE"
   else
-  echo "Please select a valid type"
+    echo "Dont Send"
   fi
 
-  echo "Sended - $FILE"
+
 
 }
 
