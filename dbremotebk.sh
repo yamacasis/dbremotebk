@@ -114,7 +114,7 @@ echo 'Remote Backup ,Starting ...'
 
 if [ $LOGSTATE -eq 1 ]
 then
-  d=$(date +%F - %H : %M : %S)
+  d=$(date +%F-%H:%M:%S)
   log_it "+ Start script ( $d ) : "
 fi
 
@@ -122,7 +122,7 @@ if [ $MYSQL -eq 1 ]
 then
   for s in "${MYSQL_dbs_name[@]}";
   do
-    d=$(date +%F - %H : %M : %S)
+    d=$(date +%F-%H:%M:%S)
     echo $s
     echo $d
 
@@ -141,7 +141,7 @@ if [ $MONGO -eq 1 ]
 then
   for s in "${MONGO_dbs_name[@]}";
   do
-    d=$(date +%F - %H : %M : %S)
+    d=$(date +%F-%H:%M:%S)
     echo $s
     echo $d
 
@@ -160,7 +160,7 @@ echo 'Remote Backup Complete'
 
 if [ $LOGSTATE -eq 1 ]
 then
-  d=$(date +%F - %H : %M : %S)
+  d=$(date +%F-%H:%M:%S)
   log_it "+ Ended script ( $d ) ;  "
 fi
 
