@@ -26,7 +26,7 @@ create_mysql_backup() {
 
   if [ $LOGSTATE -eq 1 ]
   then
-    log_it "---- Mysql backup Database $S : $d : $FILE "
+    log_it "----> Mysql backup Database $S : $d : $FILE "
   fi
 
 }
@@ -50,7 +50,7 @@ create_mongo_backup() {
 
   if [ $LOGSTATE -eq 1 ]
   then
-    log_it "---- Mongo backup Database $S : $d : $FILE "
+    log_it "----> Mongo backup Database $S : $d : $FILE "
   fi
 
 }
@@ -61,7 +61,7 @@ clean_backup() {
 
   if [ $LOGSTATE -eq 1 ]
   then
-    log_it "---- Clear backup File : $backup_path/$FILE "
+    log_it "---- |__ Clear backup File : $backup_path/$FILE "
   fi
 }
 
@@ -78,7 +78,7 @@ EOF
     echo "Sended FTP - $FILE"
     if [ $LOGSTATE -eq 1 ]
     then
-      log_it "---- Send backup File (FTP): $FILE "
+      log_it "---- |__ Send backup File (FTP): $FILE "
     fi
 
   elif [ $TYPE -eq 2 ]
@@ -97,10 +97,10 @@ EOF
 
 log_it() {
     today="$(date +'%Y%m%d')";
-    logfile='logs/'$today'.log'
+    logfile=$DIR'/logs/'$today'.log'
     if [ -e $logfile ]
     then
-      echo ' \n  ' > $logfile;
+      echo '   ' >> $logfile;
     else
     	echo '' > $logfile;
     fi
@@ -111,6 +111,8 @@ log_it() {
 ##############################
 # Start Backup Script        #
 ##############################
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 cd $backup_path
 
