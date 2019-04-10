@@ -138,8 +138,6 @@ then
   for s in "${MYSQL_dbs_name[@]}";
   do
     d=$(date +%F-%H:%M:%S)
-    echo $s
-    echo $d
 
     create_mysql_backup
 
@@ -157,8 +155,6 @@ then
   for s in "${MONGO_dbs_name[@]}";
   do
     d=$(date +%F-%H:%M:%S)
-    echo $s
-    echo $d
 
     create_mongo_backup
 
