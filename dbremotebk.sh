@@ -37,7 +37,7 @@ create_mongo_backup() {
   fi
   $MYSQLDUMP_path --host $MONGO_host -d $s $CERT --out $FILE
   tar -zcf $FILE.tar.gz $FILE
-  rm -f $FILE
+  rm -rf $FILE
   FILE="$FILE.tar.gz"
 
   echo "Mongo $s : $FILE - Backup Complete"
@@ -89,7 +89,10 @@ then
 
     send_backup
 
-    #clean_backup
+    if [ $DELE -eq 1 ]
+    then
+      clean_backup
+    fi
   done
 fi
 
@@ -105,7 +108,10 @@ then
 
     send_backup
 
-    clean_backup
+    if [ $DELE -eq 1 ]
+    then
+      clean_backup
+    fi
   done
 fi
 
