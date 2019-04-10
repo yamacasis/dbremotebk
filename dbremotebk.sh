@@ -98,6 +98,13 @@ EOF
 log_it() {
     today="$(date +'%Y%m%d')";
     logfile='logs/'$today'.log'
+    if [ -e $logfile ]
+    then
+
+    else
+    	echo '' > $logfile;
+    fi
+
     echo $1 >> $logfile;
 }
 
