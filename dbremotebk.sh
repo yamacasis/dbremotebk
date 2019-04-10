@@ -22,11 +22,12 @@ create_mysql_backup() {
   FILE="$s-$d.sql.gz"
   $MYSQLDUMP_path --user=$MYSQL_user --password=$MYSQL_password --host=$MYSQL_host $s | gzip --best > $FILE
 
-  echo "Mysql $s : $FILE - Backup Complete"
+  MSG="----> Mysql backup Database $S : $d : $FILE "
+  echo $MSG
 
   if [ $LOGSTATE -eq 1 ]
   then
-    log_it "----> Mysql backup Database $S : $d : $FILE "
+    log_it $MSG
   fi
 
 }
@@ -46,22 +47,25 @@ create_mongo_backup() {
   rm -rf $FILE
   FILE="$FILE.tar.gz"
 
-  echo "Mongo $s : $FILE - Backup Complete"
+  MSG="----> Mongo backup Database $S : $d : $FILE "
+  echo $MSG
 
   if [ $LOGSTATE -eq 1 ]
   then
-    log_it "----> Mongo backup Database $S : $d : $FILE "
+    log_it $MSG
   fi
 
 }
 
 clean_backup() {
   rm -f $backup_path/$FILE
-  echo 'Local Backup Removed'
+
+  MSG="---- |__ Clear backup File : $backup_path/$FILE "
+  echo $MSG
 
   if [ $LOGSTATE -eq 1 ]
   then
-    log_it "---- |__ Clear backup File : $backup_path/$FILE "
+    log_it $MSG
   fi
 }
 
@@ -75,23 +79,27 @@ send_backup() {
     mput $FILE
     quit
 EOF
-    echo "Sended FTP - $FILE"
+
+    MSG="---- |__ Send backup File (FTP): $FILE "
+    echo $MSG
     if [ $LOGSTATE -eq 1 ]
     then
-      log_it "---- |__ Send backup File (FTP): $FILE "
+      log_it $MSG
     fi
 
   elif [ $TYPE -eq 2 ]
   then
     rsync --rsh="sshpass -p $PASSWORD ssh -p $PORT -o StrictHostKeyChecking=no -l $USERNAME" $backup_path/$FILE $SERVER:$REMOTEDIR
-    echo "Sended SFTP - $FILE"
 
+    MSG="---- |__ Send backup File (SFTP): $FILE "
+    echo $MSG
     if [ $LOGSTATE -eq 1 ]
     then
-      log_it "---- Send backup File (SFTP): $FILE "
+      log_it $MSG
     fi
   else
-    echo "Dont Send"
+    MSG="---- |__ Dont Send"
+    echo $MSG
   fi
 }
 
@@ -116,12 +124,13 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 cd $backup_path
 
-echo 'Remote Backup ,Starting ...'
+d=$(date +%F-%H:%M:%S)
+MSG="+ Start script ( $d ) : "
+echo $MSG
 
 if [ $LOGSTATE -eq 1 ]
 then
-  d=$(date +%F-%H:%M:%S)
-  log_it "+ Start script ( $d ) : "
+  log_it $MSG
 fi
 
 if [ $MYSQL -eq 1 ]
@@ -162,12 +171,13 @@ then
   done
 fi
 
-echo 'Remote Backup Complete'
+d=$(date +%F-%H:%M:%S)
+MSG="+ Ended script ( $d ) ;  "
+echo $MSG
 
 if [ $LOGSTATE -eq 1 ]
 then
-  d=$(date +%F-%H:%M:%S)
-  log_it "+ Ended script ( $d ) ;  "
+  log_it $MSG
 fi
 
 ##############################
