@@ -100,7 +100,7 @@ log_it() {
     logfile='logs/'$today'.log'
     if [ -e $logfile ]
     then
-
+      echo ' \n  ' > $logfile;
     else
     	echo '' > $logfile;
     fi
