@@ -96,12 +96,9 @@ EOF
 }
 
 log_it() {
-  if [ -z  "$1"]
-  then
     today="$(date +'%Y%m%d')";
     logfile='logs/'$today'.log'
     echo $1 >> $logfile;
-  fi
 }
 
 ##############################
