@@ -20,7 +20,7 @@ create_mysql_backup() {
   umask 177
 
   FILE="$s-$d.sql.gz"
-  $MYSQLDUMP_path --user=$MYSQL_user --password=$MYSQL_password --host=$MYSQL_host $db_name | gzip --best > $FILE
+  $MYSQLDUMP_path --user=$MYSQL_user --password=$MYSQL_password --host=$MYSQL_host $s | gzip --best > $FILE
 
   echo "Mysql $s : $FILE - Backup Complete"
 }
@@ -89,7 +89,7 @@ then
 
     send_backup
 
-    clean_backup
+    #clean_backup
   done
 fi
 
