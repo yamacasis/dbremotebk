@@ -1,8 +1,14 @@
 
 # Linux Database Remote Backup Script
 
+##Requierments
+
+ftp command (FTP send) , rsync  (SFTP send) 
+
+
 ## Instalation
-Requierments : ftp command (FTP send) , rsync  (SFTP send) 
+
+
 1.Clone Code 
 
 2.Copy config.sample.conf to config.conf
