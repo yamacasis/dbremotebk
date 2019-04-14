@@ -4,10 +4,15 @@
 ## Instalation
 Requierments : ftp command (FTP send) , rsync  (SFTP send) 
 1.Clone Code 
+
 2.Copy config.sample.conf to config.conf
+
 3.Create backup directorie and put path into config file
+
 4.Change your config in config.conf
+
 5.Run code ./dbremotebk.sh or vuild cron
+
 
 ## Config Parameters
 
