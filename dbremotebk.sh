@@ -22,7 +22,15 @@ create_mysql_backup() {
   FILE="$s-$d.sql.gz"
   $MYSQLDUMP_path --user=$MYSQL_user --password=$MYSQL_password --host=$MYSQL_host $s | gzip --best > $FILE
 
-  MSG="----> Mysql backup Database $S : $d : $FILE "
+
+   fileskb=`du -k "$FILE" | cut -f1`
+	if [ $fileskb -gt 0 ]
+         then
+                 MSG="----> Mysql backup Database $S : $d : $FILE "
+         else
+	         MSG="----> Mysql backup Database Failed $S : $d : $FILE "
+         fi
+	
   echo $MSG
 
   if [ $LOGSTATE -eq 1 ]
@@ -35,19 +43,27 @@ create_mysql_backup() {
 create_mongo_backup() {
   umask 177
 
-  FILE="mongo-$s-$d"
+  FILE="$s"
   if [ -z  "$MONGO_user"]
   then
     CERT=""
   else
     CERT=" --username $MONGO_user --password $MONGO_password "
   fi
-  $MYSQLDUMP_path --host $MONGO_host -d $s $CERT --out $FILE
-  tar -zcf $FILE.tar.gz $FILE
+  PFIX="-$(date +'%Y%m%d%H%M%S')";
+  $MONGODUMP_path --host $MONGO_host -d $s $CERT --out $backup_path
+  tar zcf ''$FILE$PFIX'.tar.gz' $backup_path'/'$FILE'/'
   rm -rf $FILE
-  FILE="$FILE.tar.gz"
 
-  MSG="----> Mongo backup Database $S : $d : $FILE "
+  FILE="$FILE$PFIX.tar.gz"
+
+  fileskb=`du -k "$FILE" | cut -f1`
+  if [ $fileskb -gt 0 ]
+	then
+		MSG="----> Mongo backup Database $S : $d : $FILE "
+	else
+		MSG="----> Mongo backup Database Failed $S : $d : $FILE "
+	fi
   echo $MSG
 
   if [ $LOGSTATE -eq 1 ]
@@ -72,10 +88,36 @@ clean_backup() {
 send_backup() {
   if [ $TYPE -eq 1 ]
   then
+    
+    ftp -ni $SERVER <<EOF
+	user $USERNAME $PASSWORD
+	mls  $s-*.gz list.txt
+	quit
+EOF
+    ALLRemote="$(cat list.txt | wc -l)";
+nl='
+' # yeah, nl is a newline in single quotes
+    counter=0
+    dellist=''
+    KNumber=$((ALLRemote-REMOTEKEEP))
+    while IFS= read  -r N
+    do
+     
+     if [ $counter -le $KNumber ]
+     then
+     	dellist=$dellist"mdel $N$nl"
+     else
+	echo "KEEP  : $N"	
+     fi
+     counter=$((counter+1))
+
+    done <list.txt
+
     ftp -n -i $SERVER <<EOF
     user $USERNAME $PASSWORD
     binary
     cd $REMOTEDIR
+    $dellist
     mput $FILE
     quit
 EOF
@@ -114,6 +156,7 @@ log_it() {
     fi
 
     echo $1 >> $logfile;
+	echo $1
 }
 
 ##############################
