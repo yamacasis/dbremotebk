@@ -74,9 +74,13 @@ create_mongo_backup() {
 }
 
 clean_backup() {
-  rm -f $backup_path/$FILE
-
-  MSG="---- |__ Clear backup File : $backup_path/$FILE "
+  if [ $KEEPLB -eq 0 ]
+  then
+	rm -f $backup_path/$FILE
+  fi
+	
+  find $s-*.gz ! -name "$FILE" -type f -exec rm -f {} +
+  MSG="---- |__ Clear backup File  "
   echo $MSG
 
   if [ $LOGSTATE -eq 1 ]
