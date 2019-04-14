@@ -1,7 +1,6 @@
-
 # Linux Database Remote Backup Script
 
-##Requierments
+## Requierments
 
 ftp command (FTP send) , rsync  (SFTP send) 
 
