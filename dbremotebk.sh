@@ -10,7 +10,9 @@
 # Configuration        #
 ########################
 
-. config.conf
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
+. "$DIR/"config.conf
 
 ########################
 # Functions            #
@@ -166,8 +168,6 @@ log_it() {
 ##############################
 # Start Backup Script        #
 ##############################
-
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 cd $backup_path
 
