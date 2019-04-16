@@ -37,7 +37,7 @@ create_mysql_backup() {
 
   if [ $LOGSTATE -eq 1 ]
   then
-    log_it $MSG
+    log_it "$MSG"
   fi
 
 }
@@ -70,7 +70,7 @@ create_mongo_backup() {
 
   if [ $LOGSTATE -eq 1 ]
   then
-    log_it $MSG
+    log_it "$MSG"
   fi
 
 }
@@ -87,7 +87,7 @@ clean_backup() {
 
   if [ $LOGSTATE -eq 1 ]
   then
-    log_it $MSG
+    log_it "$MSG"
   fi
 }
 
@@ -132,7 +132,7 @@ EOF
     echo $MSG
     if [ $LOGSTATE -eq 1 ]
     then
-      log_it $MSG
+      log_it "$MSG"
     fi
 
   elif [ $TYPE -eq 2 ]
@@ -143,7 +143,7 @@ EOF
     echo $MSG
     if [ $LOGSTATE -eq 1 ]
     then
-      log_it $MSG
+      log_it "$MSG"
     fi
   else
     MSG="---- |__ Dont Send"
@@ -162,7 +162,7 @@ log_it() {
     fi
 
     echo $1 >> $logfile;
-	echo $1
+	echo $1$2
 }
 
 ##############################
@@ -177,7 +177,7 @@ echo $MSG
 
 if [ $LOGSTATE -eq 1 ]
 then
-  log_it $MSG
+  log_it "$MSG"
 fi
 
 if [ $MYSQL -eq 1 ]
@@ -220,7 +220,7 @@ echo $MSG
 
 if [ $LOGSTATE -eq 1 ]
 then
-  log_it $MSG
+  log_it "$MSG"
 fi
 
 ##############################
