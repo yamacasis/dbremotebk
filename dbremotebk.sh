@@ -21,7 +21,8 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 create_mysql_backup() {
   umask 177
 
-  FILE="$s-$d.sql.gz"
+  PFIX="-$(date +'%Y%m%d%H%M%S')";
+  FILE="$s-$PFIX.sql.gz"
   $MYSQLDUMP_path --user=$MYSQL_user --password=$MYSQL_password --host=$MYSQL_host $s | gzip --best > $FILE
 
 
