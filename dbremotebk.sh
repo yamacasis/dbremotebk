@@ -21,7 +21,7 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 create_mysql_backup() {
   umask 177
 
-  PFIX="-$(date +'%Y%m%d%H%M%S')";
+  PFIX="$(date +'%Y%m%d%H%M%S')";
   FILE="$s-$PFIX.sql.gz"
   $MYSQLDUMP_path --user=$MYSQL_user --password=$MYSQL_password --host=$MYSQL_host $s | gzip --best > $FILE
 
@@ -33,7 +33,7 @@ create_mysql_backup() {
          else
 	         MSG="----> Mysql backup Database Failed $S : $d : $FILE "
          fi
-	
+
   echo $MSG
 
   if [ $LOGSTATE -eq 1 ]
@@ -81,7 +81,7 @@ clean_backup() {
   then
 	rm -f $backup_path/$FILE
   fi
-	
+
   find $s-*.gz ! -name "$FILE" -type f -exec rm -f {} +
   MSG="---- |__ Clear backup File  "
   echo $MSG
@@ -95,7 +95,7 @@ clean_backup() {
 send_backup() {
   if [ $TYPE -eq 1 ]
   then
-    
+
     ftp -ni $SERVER <<EOF
 	user $USERNAME $PASSWORD
 	mls  $s-*.gz list.txt
@@ -109,12 +109,12 @@ nl='
     KNumber=$((ALLRemote-REMOTEKEEP))
     while IFS= read  -r N
     do
-     
+
      if [ $counter -le $KNumber ]
      then
      	dellist=$dellist"mdel $N$nl"
      else
-	echo "KEEP  : $N"	
+	echo "KEEP  : $N"
      fi
      counter=$((counter+1))
 
