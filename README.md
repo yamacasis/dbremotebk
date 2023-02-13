@@ -2,7 +2,12 @@
 
 ## Requierments
 
-ftp command (FTP send) , rsync  (SFTP send) 
+ftp command (FTP send) , rsync  (SFTP send) , gzip
+
+Install Gzip:
+yum install gzip
+# Or
+apt-get install gzip
 
 
 ## Instalation
